@@ -1,0 +1,265 @@
+:root {
+  --ground: #161616;
+  --panel: #202020; /* the waves' own colour */
+  --ink: #efece6; /* the logo's paper */
+  --muted: #b9b6b0;
+  --margin: clamp(16px, 3vw, 32px);
+  --section-gap: clamp(96px, 12vw, 180px);
+  --step-small: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.375rem, 1.1rem + 1vw, 2.125rem);
+  --step-head: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  --step-display: clamp(3.75rem, 2rem + 6vw, 6.5rem);
+  --display: "Gambarino", Georgia, "Times New Roman", serif;
+  --text: "General Sans", "Segoe UI", system-ui, sans-serif;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--ground); }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 var(--step-body)/1.55 var(--text);
+}
+img { display: block; max-width: 100%; height: auto; }
+ul { list-style: none; margin: 0; padding: 0; }
+p { margin: 0; }
+a { color: inherit; text-underline-offset: 0.2em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+section[id] { scroll-margin-top: 72px; }
+
+h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 400; letter-spacing: -0.02em; line-height: 0.95; }
+h1 { font-size: var(--step-display); }
+h2 { font-size: var(--step-head); }
+h3 { font-size: var(--step-lead); line-height: 1.3; }
+
+.skip-link { position: absolute; left: var(--margin); top: -80px; z-index: 20; padding: 12px 16px; background: var(--ink); color: var(--ground); }
+.skip-link:focus { top: 12px; }
+
+.button {
+  display: inline-block;
+  padding: 14px 24px;
+  background: var(--ink);
+  color: var(--ground);
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease), background-color 0.2s;
+}
+.button:hover { background: #fff; transform: translateY(-2px); }
+.button:active { transform: translateY(0) scale(0.98); }
+
+/* Header */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 64px;
+  padding-inline: var(--margin);
+  background: var(--ground);
+}
+.logo { display: block; transition: transform 0.2s var(--ease); }
+.logo:hover { transform: scale(1.06); }
+.site-nav { display: flex; gap: clamp(16px, 2.5vw, 36px); }
+.site-nav a { padding-block: 10px; text-decoration: none; transition: color 0.2s; }
+.site-nav a:hover { color: #fff; text-decoration: underline; }
+.menu-toggle { display: none; }
+
+/* Hero */
+/* Name at the foot, photo hung from it. .is-pinned (added by the script) holds the stage while the photo closes on the face */
+.hero-stage { --name: min(22vw, 38svh); position: relative; height: calc(100svh - 64px); overflow: hidden; }
+.hero.is-pinned { height: calc(230svh - 64px); }
+.is-pinned .hero-stage { position: sticky; top: 64px; }
+.hero-bg { position: absolute; inset: 0; opacity: 0.5; } /* dimmed so the bright facets can't wash out the text on top */
+.hero-note { position: absolute; z-index: 2; top: clamp(24px, 5vh, 48px); left: var(--margin); width: min(17em, 26vw); font-size: var(--step-lead); line-height: 1.3; }
+.hero-cta { position: absolute; z-index: 2; right: var(--margin); bottom: calc(var(--name) * 0.82 + 28px); }
+.hero-name { position: absolute; inset: auto 0 0; padding-bottom: 0.04em; font-size: var(--name); line-height: 0.82; text-align: center; text-transform: uppercase; white-space: nowrap; }
+.hero-photo { --w: min(30vw, 48svh); position: absolute; top: calc(100% - var(--name) * 0.6 - var(--w) * 0.625); left: 50%; width: var(--w); aspect-ratio: 4 / 5; overflow: hidden; background: var(--ink); transform: translate(-50%, -50%) rotate(5deg); }
+/* Multiply turns the photo's white backdrop into the logo's paper colour */
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
+@media (max-height: 480px) { .hero-photo { --w: 36svh; } }
+
+/* About */
+.about {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 48px 24px;
+  padding: var(--section-gap) var(--margin) 0;
+}
+.about-intro { grid-column: 1 / 5; }
+.about h2 { font-size: var(--step-lead); line-height: 1.3; }
+.about-facts { margin-top: 24px; font-size: var(--step-small); color: var(--muted); }
+.about-facts li + li { margin-top: 12px; }
+.about-copy { grid-column: 5 / -1; }
+.about-lead { font-family: var(--display); font-size: clamp(1.75rem, 3.7vw, 3.5rem); line-height: 1.12; letter-spacing: -0.02em; text-wrap: pretty; }
+.about-rest { max-width: 34em; margin: clamp(40px, 7vh, 72px) 0 0 auto; color: var(--muted); }
+
+/* Works */
+.works {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(64px, 12vh, 140px) 24px;
+  padding: var(--section-gap) var(--margin) 0;
+}
+.works h2 { grid-column: 1 / -1; }
+.work-wide { grid-column: 1 / 8; }
+.work-tall { grid-column: 9 / -1; margin-top: 180px; }
+.work-tall .shot { aspect-ratio: 4 / 5; }
+/* The recording is a phone centered in a landscape video: this frame trims only the black bars beside it */
+.work-tall video.shot { aspect-ratio: 482 / 1080; width: min(100%, calc(70svh * 482 / 1080)); height: auto; padding: 0; object-fit: cover; }
+.work-inset { grid-column: 3 / 11; }
+.work-inset .shot { aspect-ratio: 16 / 9; }
+.work h3 { margin-top: 20px; }
+.work p { margin-top: 8px; }
+.work-meta { color: var(--muted); font-size: var(--step-small); }
+
+.shot {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  padding: 16px;
+  background: var(--panel);
+  color: var(--muted);
+  text-align: center;
+  object-fit: cover;
+}
+
+/* Tech stack: plain stacked rows by default; .is-scene (added by the script) makes it the pinned sequence */
+.tech { padding: var(--section-gap) var(--margin) 0; }
+.tech-cue, .tech-index, .tech-progress, .tool-names { display: none; }
+.tech-chapters { list-style: none; margin: 48px 0 0; padding: 0; display: grid; gap: 64px; }
+.tech-chapter { display: flex; align-items: center; gap: 48px; }
+.tech-text { flex: none; width: 340px; }
+.tech-count { color: var(--muted); font-size: var(--step-small); }
+.tech-text h3 { margin-top: 12px; font-family: var(--text); font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; text-transform: uppercase; }
+.tech-desc { margin-top: 12px; color: var(--muted); }
+/* One line, never wrapping: tiles shrink to share the width */
+.tool-list { display: flex; flex: 0 1 auto; gap: clamp(6px, 1.2vw, 16px); width: calc(var(--count) * var(--tile) + (var(--count) - 1) * 16px); max-width: 100%; min-width: 0; }
+.tool-list li { flex: 1 1 0; min-width: 0; font-size: var(--step-small); line-height: 1.25; text-align: center; }
+.tool-icon { display: grid; place-items: center; width: 100%; aspect-ratio: 1; background: var(--ink); color: #111; container-type: inline-size; }
+.tool-icon img { width: 62%; height: 62%; object-fit: contain; }
+.tool-icon-text { font-size: 34cqw; font-weight: 700; }
+.tool-name { display: block; margin-top: 10px; }
+
+.tech.is-scene { height: 600svh; padding: 0; margin-top: var(--section-gap); background: #000; scroll-margin-top: 0; }
+.is-scene .tech-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #000; perspective: 1000px; }
+.is-scene h2 { position: absolute; z-index: 3; top: 84px; left: var(--margin); font-size: var(--step-lead); }
+.is-scene .tech-chapters { position: absolute; inset: 0; margin: 0; display: block; transform-style: preserve-3d; }
+.is-scene .tech-chapter { position: absolute; top: 50%; left: var(--margin); right: var(--margin); justify-content: center; opacity: 0; pointer-events: none; will-change: transform, opacity; }
+.is-scene .tech-chapter:nth-child(even) { flex-direction: row-reverse; }
+.is-scene .tech-cue { display: block; position: absolute; z-index: 3; left: var(--margin); bottom: 24px; font-size: var(--step-small); }
+.is-scene .tech-index { display: block; position: absolute; z-index: 3; right: var(--margin); bottom: 20px; text-align: right; }
+.tech-index button { display: block; width: 100%; padding: 4px 8px; background: none; border: 0; color: var(--muted); font: inherit; font-size: var(--step-small); text-align: right; cursor: pointer; transition: color 0.2s; }
+.tech-index button:hover, .tech-index button.is-active { color: #fff; }
+.is-scene .tech-progress { display: block; position: absolute; z-index: 3; inset: auto 0 0; height: 3px; }
+.tech-progress span { display: block; height: 100%; background: var(--ink); transform: scaleX(0); transform-origin: left; }
+
+/* Certifications */
+.certs {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 48px 24px;
+  padding: var(--section-gap) var(--margin) 0;
+}
+.certs h2 { grid-column: 1 / 6; position: sticky; top: 96px; align-self: start; }
+.cert-list { grid-column: 6 / -1; display: grid; gap: 64px; }
+.cert { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; align-items: end; }
+.cert .shot { aspect-ratio: 22 / 17; padding: 0; } /* the certificate's own ratio, so no edge gets cropped */
+.cert p { margin-top: 8px; color: var(--muted); }
+
+/* Contact */
+.contact { padding: var(--section-gap) var(--margin) 0; }
+.contact h2 { font-size: var(--step-display); }
+.contact-lead { margin-top: 24px; font-size: var(--step-lead); line-height: 1.3; }
+.contact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; margin-top: 40px; }
+.text-link { padding-block: 10px; }
+
+/* Footer */
+.site-footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  margin-top: var(--section-gap);
+  padding: 24px var(--margin);
+  font-size: var(--step-small);
+  color: var(--muted);
+}
+.site-footer a { color: var(--ink); }
+.site-footer > :last-child { text-align: right; }
+
+/* Entrances: hidden only once the script has run, so content never depends on it */
+.js [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+.js [data-reveal].is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 9px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .menu-toggle span { display: block; height: 2px; background: var(--ink); }
+  .site-nav {
+    display: none;
+    position: absolute;
+    inset: 100% 0 auto;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px var(--margin) 16px;
+    background: var(--ground);
+  }
+  .site-nav.is-open { display: flex; }
+  .site-nav a { padding-block: 12px; }
+
+  .hero-top { position: absolute; z-index: 2; top: 20px; inset-inline: var(--margin); display: grid; justify-items: start; gap: 16px; }
+  .hero-note, .hero-cta { position: static; width: auto; }
+  .hero-photo { --w: min(72vw, 40svh); }
+
+  .about-intro, .about-copy { grid-column: 1 / -1; }
+
+  .work-wide, .work-tall, .work-inset { grid-column: 1 / -1; margin-top: 0; }
+  .work-tall { margin-left: 18%; }
+  .work-inset { margin-right: 12%; }
+
+  .is-scene h2 { top: 76px; }
+  .is-scene .tech-index { display: none; }
+
+  .certs h2, .cert-list { grid-column: 1 / -1; position: static; }
+  .cert { grid-template-columns: 1fr; }
+
+  .site-footer { grid-template-columns: 1fr; gap: 8px; }
+  .site-footer > :last-child { text-align: left; }
+}
+
+/* Tech stack: below this the description can't sit beside a full row, so it goes underneath */
+@media (max-width: 1100px) {
+  .tech-chapter, .is-scene .tech-chapter:nth-child(even) { flex-direction: column; align-items: flex-start; gap: 28px; }
+  .is-scene .tech-chapter { justify-content: flex-start; }
+  .tech-text { width: 100%; }
+}
+
+/* Tech stack: names under 8 small tiles won't fit on a phone, so they become one line of text */
+@media (max-width: 560px) {
+  .tool-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .tool-names { display: block; margin-top: 12px; font-size: var(--step-small); }
+}
