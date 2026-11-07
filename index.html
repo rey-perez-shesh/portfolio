@@ -6,6 +6,18 @@
   <title>Rey Perez | IT Portfolio</title>
   <meta name="description" content="Portfolio of Rey Perez, an IT student at St. Dominic College of Asia: academic projects, tech stack, certifications and contact details.">
   <link rel="icon" href="assets/images/logo.png">
+  <!-- Runs before first paint so the opening screen can't flash the page; it plays once per visit -->
+  <script>
+    try {
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('enter');
+        if (!sessionStorage.getItem('intro-seen')) {
+          document.documentElement.classList.add('intro');
+          sessionStorage.setItem('intro-seen', '1');
+        }
+      }
+    } catch (error) {}
+  </script>
   <link rel="preconnect" href="https://api.fontshare.com">
   <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=gambarino@400&display=swap">
@@ -15,6 +27,20 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="intro-screen" aria-hidden="true">
+    <div class="intro-strips"><i style="--i:0"></i><i style="--i:3"></i><i style="--i:1"></i><i style="--i:5"></i><i style="--i:2"></i><i style="--i:6"></i><i style="--i:4"></i><i style="--i:7"></i></div>
+    <p class="intro-label intro-label-left">Rey Perez — Portfolio</p>
+    <p class="intro-label intro-label-right">Bacoor City, PH<br>14°28′N 120°58′E</p>
+    <div class="intro-greeting">
+      <img src="assets/images/logo.png" alt="" width="120" height="120">
+      <p class="intro-words"><span>Kumusta</span><span>Hello</span></p>
+    </div>
+    <div class="intro-progress">
+      <p class="intro-label">Loading · From “Kumusta” to “Hello”</p>
+      <div class="band"></div>
+    </div>
+  </div>
 
   <header class="site-header">
     <a class="logo" href="#top"><img src="assets/images/logo.png" alt="Rey Perez home" width="40" height="40"></a>
@@ -34,14 +60,23 @@
     <section class="hero" id="top">
       <div class="hero-stage">
         <div class="hero-bg" id="hero-bg"></div>
-        <div class="hero-top">
+        <div class="hero-panel" id="hero-panel">
+          <div class="hero-portrait">
+            <img src="assets/images/profile-hero.jpg" alt="Portrait of Rey Perez" width="800" height="800">
+          </div>
+          <div class="band band-top" aria-hidden="true"></div>
+          <div class="band band-bottom" aria-hidden="true"></div>
+          <div class="hero-fringe" aria-hidden="true"></div>
+        </div>
+        <h1 class="hero-name"><span>Rey</span> <span>Perez</span></h1>
+        <div class="hero-lead">
+          <p class="hero-chip">IT student @ St. Dominic College of Asia</p>
+          <p class="hero-role" id="hero-role" aria-hidden="true">Web &amp; mobile development</p>
           <p class="hero-note">IT student building for web and mobile, based in Bacoor City.</p>
           <a class="button hero-cta" href="#works">See my works</a>
         </div>
-        <h1 class="hero-name">Rey Perez</h1>
-        <div class="hero-photo" id="hero-photo">
-          <img src="assets/images/profile-hero.jpg" alt="Portrait of Rey Perez" width="800" height="800">
-        </div>
+        <p class="hero-stat"><span class="hero-stat-label">Tools in my stack</span> <span class="hero-stat-value">27</span></p>
+        <p class="hero-cue" aria-hidden="true">Scroll</p>
       </div>
     </section>
 
@@ -66,24 +101,19 @@
       <!-- To add a project: copy an <article>. To add its picture: put the file in assets/projects/
            and replace the .shot div with <img class="shot" src="assets/projects/NAME.jpg" alt="WHAT IT SHOWS" width="1600" height="1000" loading="lazy">. -->
       <article class="work work-wide" data-reveal>
-        <div class="shot">[Capstone screenshot]</div>
+        <div class="shot"></div>
         <h3>Capstone Project</h3>
-        <p>[One sentence: what it does and who it is for.]</p>
-        <p class="work-meta">[Your role] · [Tools used] · <a href="#">[Repo or demo link]</a></p>
       </article>
 
       <article class="work work-tall" data-reveal>
         <video class="shot" src="assets/projects/iot-demo.mp4" poster="assets/projects/iot-demo-poster.jpg" width="1920" height="1080" controls loop muted playsinline preload="metadata" aria-label="Screen recording of the app scanning a face, generating a hairstyle preview, then listing the top hairstyle matches"></video>
         <h3>Smart Facial Analysis Platform for Personalized Hairstyle Recommendation</h3>
         <p>A Smart Facial Analysis Platform that uses AI and IoT technology to analyze facial features and recommend suitable hairstyles. It also generates a visual preview of the selected haircut directly onto the user's photo, helping customers make more informed decisions.</p>
-        <p class="work-meta">[Your role] · [Tools used] · <a href="#">[Repo or demo link]</a></p>
       </article>
 
       <article class="work work-inset" data-reveal>
         <div class="shot">[Project screenshot]</div>
         <h3>[Other major project title]</h3>
-        <p>[One sentence: what it does and who it is for.]</p>
-        <p class="work-meta">[Your role] · [Tools used] · <a href="#">[Repo or demo link]</a></p>
       </article>
     </section>
 

@@ -71,18 +71,83 @@ h3 { font-size: var(--step-lead); line-height: 1.3; }
 .menu-toggle { display: none; }
 
 /* Hero */
-/* Name at the foot, photo hung from it. .is-pinned (added by the script) holds the stage while the photo closes on the face */
-.hero-stage { --name: min(22vw, 38svh); position: relative; height: calc(100svh - 64px); overflow: hidden; }
-.hero.is-pinned { height: calc(230svh - 64px); }
-.is-pinned .hero-stage { position: sticky; top: 64px; }
+/* Base layout is the stacked one (phones, tablets, short screens, no script); the three columns are in the media query below */
+.band { --band-h: 34px; height: var(--band-h); border-block: 2px solid #161616; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='20'%3E%3Cpath d='M14 2l10 8-10 8-10-8z' fill='none' stroke='%23161616' stroke-width='2'/%3E%3Cpath d='M14 7l4 3-4 3-4-3z' fill='%23161616'/%3E%3C/svg%3E") center / 28px 20px repeat-x; }
+.hero-stage { --name: 21vw; --mono: ui-monospace, Consolas, "Cascadia Mono", monospace; position: relative; display: grid; gap: 24px; padding: 24px var(--margin) 48px; overflow: hidden; }
 .hero-bg { position: absolute; inset: 0; opacity: 0.5; } /* dimmed so the bright facets can't wash out the text on top */
-.hero-note { position: absolute; z-index: 2; top: clamp(24px, 5vh, 48px); left: var(--margin); width: min(17em, 26vw); font-size: var(--step-lead); line-height: 1.3; }
-.hero-cta { position: absolute; z-index: 2; right: var(--margin); bottom: calc(var(--name) * 0.82 + 28px); }
-.hero-name { position: absolute; inset: auto 0 0; padding-bottom: 0.04em; font-size: var(--name); line-height: 0.82; text-align: center; text-transform: uppercase; white-space: nowrap; }
-.hero-photo { --w: min(30vw, 48svh); position: absolute; top: calc(100% - var(--name) * 0.6 - var(--w) * 0.625); left: 50%; width: var(--w); aspect-ratio: 4 / 5; overflow: hidden; background: var(--ink); transform: translate(-50%, -50%) rotate(5deg); }
-/* Multiply turns the photo's white backdrop into the logo's paper colour */
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
-@media (max-height: 480px) { .hero-photo { --w: 36svh; } }
+/* Thin vertical threads over the waves */
+.hero-stage::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(90deg, rgb(239 236 230 / 0.05) 0 1px, transparent 1px 8px); }
+.hero-panel, .hero-name, .hero-lead, .hero-stat { position: relative; z-index: 2; }
+
+.hero-panel { width: min(100%, 480px, 70svh); justify-self: center; padding-top: 34px; }
+.hero-portrait { position: relative; aspect-ratio: 1; background: repeating-linear-gradient(90deg, #fff 0 3px, #cfcfcf 3px 4px); }
+/* The picture is shown exactly as it is: no filter, crop or hover state */
+.hero-portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; background: #fff; }
+.band-top { position: absolute; z-index: 1; inset: 0 0 auto; }
+.hero-fringe { height: 44px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='44'%3E%3Cg stroke='%23efece6'%3E%3Cpath d='M2 0v30M6 0v44M10 0v22M14 0v38M18 0v28M22 0v44M26 0v18M30 0v36M34 0v26M38 0v42M42 0v20M46 0v34'/%3E%3C/g%3E%3C/svg%3E") top / 48px 44px repeat-x; mask-image: linear-gradient(#000 20%, transparent); }
+
+.hero-name { font-size: var(--name); line-height: 0.82; text-align: center; text-transform: uppercase; white-space: nowrap; }
+.hero-name span { display: inline-block; }
+.hero-chip { width: fit-content; padding: 6px 12px; background: var(--ink); color: var(--ground); font: 700 var(--step-small)/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; text-wrap: balance; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.hero-role { margin-top: 12px; overflow: hidden; color: var(--muted); font: 400 var(--step-small)/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; text-overflow: ellipsis; white-space: nowrap; }
+.hero-note { margin-top: 24px; font-size: var(--step-lead); line-height: 1.3; }
+.hero-cta { margin-top: 24px; }
+.hero-stat-label { display: block; color: var(--muted); font: 400 var(--step-small)/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.hero-stat-value { display: block; margin-top: 4px; font-family: var(--display); font-size: var(--step-head); line-height: 1; }
+.hero-cue { display: none; }
+
+@media (min-width: 1000px) and (min-height: 560px) {
+  .hero-stage { --name: min(11vw, 26svh); --panel: min(38vw, 66svh); display: block; height: calc(100svh - 64px); padding: 0; }
+  /* .is-pinned (added by the script) holds the stage while the name parts and the picture wipes away */
+  .hero.is-pinned { height: calc(220svh - 64px); }
+  .is-pinned .hero-stage { position: sticky; top: 64px; }
+  .hero-panel { position: absolute; top: 24px; bottom: 0; left: 0; right: 0; display: flex; flex-direction: column; width: var(--panel); margin-inline: auto; }
+  .hero-portrait { flex: 1; min-height: 0; aspect-ratio: auto; }
+  .hero-fringe { flex: none; }
+  .hero-name { position: static; }
+  .hero-name span { position: absolute; z-index: 2; bottom: 20px; left: var(--margin); }
+  .hero-name span:last-child { left: auto; right: var(--margin); }
+  .hero-lead { position: absolute; top: 24px; left: var(--margin); width: calc((100% - var(--panel)) / 2 - var(--margin) * 2); }
+  .hero-stat { position: absolute; top: 24px; right: var(--margin); text-align: right; }
+  .hero-cue { display: block; position: absolute; z-index: 3; bottom: 6px; left: 50%; padding: 2px 8px; background: var(--ground); font: 400 var(--step-small)/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; transform: translateX(-50%); }
+}
+
+/* Opening screen: all CSS, so it always finishes and removes itself even if the script fails. It never takes clicks. */
+.intro-screen { display: none; }
+.intro .intro-screen { position: fixed; inset: 0; z-index: 30; display: grid; align-content: center; padding: var(--margin); overflow: hidden; color: var(--ground); pointer-events: none; animation: intro-gone 0s linear 2.9s forwards; }
+/* The paper is eight strips that slide away in alternating directions; the content fades just before they go */
+.intro-strips { position: absolute; inset: 0; display: grid; grid-template-rows: repeat(8, 1fr); }
+.intro-strips i { margin-block: -1px; background: var(--ink); animation: intro-strip 0.55s var(--ease) calc(2s + var(--i) * 0.05s) forwards; }
+.intro-strips i:nth-child(even) { --to: 101%; }
+.intro-screen > :not(.intro-strips) { position: relative; animation: intro-hide 0.2s linear 1.85s forwards; }
+.intro-label { font: 700 clamp(0.6875rem, 0.65rem + 0.15vw, 0.8125rem)/1.4 ui-monospace, Consolas, "Cascadia Mono", monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+.intro-screen > .intro-label-left, .intro-screen > .intro-label-right { position: absolute; top: var(--margin); left: var(--margin); }
+.intro-screen > .intro-label-right { left: auto; right: var(--margin); text-align: right; }
+.intro-greeting { display: flex; align-items: flex-end; gap: clamp(16px, 3vw, 40px); }
+.intro-greeting img { width: clamp(64px, 9vw, 120px); animation: intro-weave 1.6s linear both; }
+.intro-words { display: grid; overflow: hidden; font-family: var(--display); font-size: clamp(3.5rem, 11vw, 9rem); line-height: 1; letter-spacing: -0.02em; text-transform: uppercase; }
+.intro-words span { grid-area: 1 / 1; animation: intro-out 0.45s var(--ease) 0.9s forwards; }
+.intro-words span + span { transform: translateY(100%); animation: intro-in 0.45s var(--ease) 0.9s forwards; }
+.intro-screen > .intro-progress { position: absolute; inset: auto var(--margin) var(--margin); display: grid; gap: 12px; }
+.intro-progress .band { background-color: transparent; animation: intro-fill 1.9s linear both; }
+@keyframes intro-gone { to { visibility: hidden; } }
+@keyframes intro-strip { to { transform: translateX(var(--to, -101%)); } }
+@keyframes intro-hide { to { opacity: 0; } }
+@keyframes intro-weave { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
+@keyframes intro-fill { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+@keyframes intro-out { to { transform: translateY(-100%); } }
+@keyframes intro-in { to { transform: translateY(0); } }
+
+/* Hero entrance, after the opening screen when it plays. "backwards" hands control to the scroll script once it ends. */
+.enter { --start: 0s; }
+.intro { --start: 2.1s; }
+.enter .hero-portrait img { animation: intro-weave 1.3s ease-in-out var(--start) backwards; }
+.enter .band-top { animation: hero-band 1.3s ease-in-out var(--start) backwards; }
+.enter .hero-name span { animation: hero-rise 0.9s var(--ease) calc(var(--start) + 0.2s) backwards; }
+.enter .hero-lead, .enter .hero-stat, .enter .hero-cue { animation: hero-fade 0.8s var(--ease) calc(var(--start) + 0.6s) backwards; }
+@keyframes hero-band { from { top: calc(100% - 112px); } to { top: 0; } } /* 112px: both bands plus the fringe, so it starts on the lower band */
+@keyframes hero-rise { from { opacity: 0; transform: translateY(30%); } }
+@keyframes hero-fade { from { opacity: 0; } }
 
 /* About */
 .about {
@@ -116,7 +181,6 @@ h3 { font-size: var(--step-lead); line-height: 1.3; }
 .work-inset .shot { aspect-ratio: 16 / 9; }
 .work h3 { margin-top: 20px; }
 .work p { margin-top: 8px; }
-.work-meta { color: var(--muted); font-size: var(--step-small); }
 
 .shot {
   display: grid;
@@ -230,10 +294,6 @@ h3 { font-size: var(--step-lead); line-height: 1.3; }
   }
   .site-nav.is-open { display: flex; }
   .site-nav a { padding-block: 12px; }
-
-  .hero-top { position: absolute; z-index: 2; top: 20px; inset-inline: var(--margin); display: grid; justify-items: start; gap: 16px; }
-  .hero-note, .hero-cta { position: static; width: auto; }
-  .hero-photo { --w: min(72vw, 40svh); }
 
   .about-intro, .about-copy { grid-column: 1 / -1; }
 

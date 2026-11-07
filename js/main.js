@@ -22,22 +22,27 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-// The hero name is sized for Gambarino: if that font fails, shrink the wider fallback so the name isn't clipped
+const heroStage = document.querySelector('.hero-stage');
+const heroPanel = document.getElementById('hero-panel');
+const heroNames = [...document.querySelectorAll('.hero-name span')];
+const threeColumns = matchMedia('(min-width: 1000px) and (min-height: 560px)'); // same query as the hero's CSS
+
+// The hero name is sized for Gambarino: if that font fails, shrink the wider fallback so the name isn't clipped or covered
 document.fonts.ready.then(() => {
-  const name = document.querySelector('.hero-name');
-  const overflow = name.scrollWidth / name.clientWidth;
-  if (overflow > 1) name.style.fontSize = `calc(var(--name) / ${overflow * 1.04})`;
+  const side = heroNames[0].getBoundingClientRect().left;
+  const room = threeColumns.matches ? (heroStage.clientWidth - heroPanel.offsetWidth) / 2 - side * 2 : heroStage.clientWidth - side * 2;
+  const width = threeColumns.matches ? heroNames[1].offsetWidth : heroNames[1].getBoundingClientRect().right - side;
+  if (width > room) document.querySelector('.hero-name').style.fontSize = `calc(var(--name) / ${(width / room) * 1.04})`;
 });
 
-// Hero and About: the tilted photo closes into a circle on the face, then the About sentence lights up word by word.
-// Without this (reduced motion, no script) the photo stays tilted and the sentence stays fully lit.
+// Hero and About. On scroll the name parts off both sides, the side text fades and the picture wipes away from the bottom;
+// then the About sentence lights up word by word. Without this (reduced motion, no script) everything stays in place and lit.
 if (!reducedMotion) {
   const hero = document.querySelector('.hero');
-  const stage = document.querySelector('.hero-stage');
-  const photo = document.getElementById('hero-photo');
-  const photoImage = photo.querySelector('img');
-  const heroName = document.querySelector('.hero-name');
-  const fades = [...document.querySelector('.hero-top').children];
+  const stage = heroStage;
+  const fades = [...document.querySelectorAll('.hero-lead, .hero-stat, .hero-cue')];
+  const bands = [...document.querySelectorAll('.hero-panel .band, .hero-fringe')];
+  const role = document.getElementById('hero-role');
   const lead = document.getElementById('about-lead');
   lead.innerHTML = lead.textContent.split(' ').map((word) => `<span>${word}</span>`).join(' ');
   const words = [...lead.children];
@@ -51,26 +56,23 @@ if (!reducedMotion) {
     queued = false;
     const rect = hero.getBoundingClientRect();
     if (rect.bottom > 0) {
-      const p = clamp((stage.getBoundingClientRect().top - rect.top) / (rect.height - stage.offsetHeight));
-      const linear = clamp((p - 0.04) / 0.62);
-      const t = linear * linear * (3 - 2 * linear);
-      const w = photo.offsetWidth;
-      const h = photo.offsetHeight;
-      const r = w * 0.4;
-      // Where the face sits in the photo: profile-hero.jpg has it centred, 39% of the way down
-      const cx = w / 2;
-      const cy = Math.max(r, Math.min(h - r, h * 0.39));
-      const nameTop = heroName.offsetTop;
-      const scale = Math.min(innerWidth * (innerWidth <= 768 ? 0.56 : 0.24), innerHeight * 0.34, nameTop - 32) / (r * 2);
-      const y = nameTop / 2 - photo.offsetTop - scale * (cy - h / 2);
-      photo.style.transform = `translate(-50%, -50%) translateY(${y * t}px) rotate(${lerp(5, 0, t)}deg) scale(${lerp(1, scale, t)})`;
-      photo.style.clipPath = `inset(${(cy - r) * t}px ${(w - cx - r) * t}px ${(h - cy - r) * t}px ${(cx - r) * t}px round ${r * t}px)`;
-      photoImage.style.filter = `grayscale(${1 - clamp((p - 0.2) / 0.4)})`;
-      const fade = 1 - clamp((p - 0.08) / 0.2);
+      // Stacked layouts just scroll: p stays 0, which also clears anything left from a wider window
+      const p = threeColumns.matches ? clamp((stage.getBoundingClientRect().top - rect.top) / (rect.height - stage.offsetHeight)) : 0;
+      const parted = clamp(p / 0.35);
+      heroNames.forEach((name, index) => {
+        name.style.transform = parted ? `translateX(${(index ? 1 : -1) * parted * 34}vw)` : '';
+        name.style.opacity = parted ? 1 - parted : '';
+      });
+      const fade = 1 - clamp(p / 0.18);
       fades.forEach((element) => {
-        element.style.opacity = fade;
+        element.style.opacity = fade === 1 ? '' : fade;
+        element.style.transform = fade === 1 || element.classList.contains('hero-cue') ? '' : `translateY(${(fade - 1) * 40}px)`;
         element.style.visibility = fade === 0 ? 'hidden' : '';
       });
+      const bandsFade = 1 - clamp((p - 0.05) / 0.2);
+      bands.forEach((band) => { band.style.opacity = bandsFade === 1 ? '' : bandsFade; });
+      const wipe = clamp((p - 0.35) / 0.5);
+      heroPanel.style.clipPath = wipe ? `inset(0 0 ${wipe * 100}% 0)` : '';
     }
     const leadRect = lead.getBoundingClientRect();
     const lit = clamp((innerHeight * 0.85 - leadRect.top) / (leadRect.height + innerHeight * 0.25));
@@ -89,6 +91,25 @@ if (!reducedMotion) {
   addEventListener('scroll', queueRender, { passive: true });
   addEventListener('resize', queueRender);
   render();
+
+  // The role line decodes from scrambled letters into each role in turn
+  const roles = ['Web & mobile development', 'BS Information Technology', 'Bacoor City, Philippines'];
+  const scramble = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/';
+  let roleIndex = 0;
+  function decode(text) {
+    const start = performance.now();
+    (function frame(now) {
+      const shown = Math.floor(((now - start) / 900) * text.length);
+      role.textContent = [...text].map((letter, index) => (index < shown || letter === ' ' ? letter : scramble[Math.floor(Math.random() * scramble.length)])).join('');
+      if (shown < text.length) requestAnimationFrame(frame);
+    })(start);
+  }
+  setInterval(() => {
+    if (!document.hidden && hero.getBoundingClientRect().bottom > 0) {
+      roleIndex = (roleIndex + 1) % roles.length;
+      decode(roles[roleIndex]);
+    }
+  }, 3500);
 }
 
 // Tech stack scroll sequence: each category's icon row rises in, holds, then leaves through the top.

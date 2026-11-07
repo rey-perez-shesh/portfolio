@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-11-07T15:40:17.753Z",
         "reason": "Claude triage: .about-lead is a 28-56px display sentence in Gambarino; tight leading is intentional at that size"
+      },
+      {
+        "rule": "repeating-stripes-gradient",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-07T16:17:24.111Z",
+        "reason": "User-requested: thin thread texture on the hero and portrait backing, carried over from the jarnket.com reference"
       }
     ]
   }
